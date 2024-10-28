@@ -1,0 +1,8 @@
+insert 3
+insert 30
+insert 15
+insert 4
+insert 7
+insert 18
+delete 3
+delete 7
