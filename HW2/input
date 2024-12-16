@@ -1,0 +1,9 @@
+bucket 10
+slot 2
+insert 3
+insert 13
+insert 4
+search 13
+delete 3
+search 4
+exit
