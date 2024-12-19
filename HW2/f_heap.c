@@ -23,6 +23,11 @@ struct F_Heap_LinkedList {
     struct Node* data;
 };
 struct F_Heap_LinkedList* F_heap_head;
+
+void F_Heap_Merge_Check() {
+    struct F_Heap_LinkedList* now = F_heap_head;
+
+}
 void F_Heap_Insert(int key) {
     struct F_Heap_LinkedList* new_list_node = (struct F_Heap_LinkedList*)calloc(1, sizeof(struct F_Heap_LinkedList));
     if( F_heap_head == NULL ) {
@@ -48,6 +53,8 @@ void F_Heap_Insert(int key) {
     return;
 }
 void F_Heap_Root_Append(struct Node* target) {
+    target -> root = 1;
+    target -> parent = NULL;
     struct F_Heap_LinkedList* now = F_heap_head;
     while( now != NULL ) now = now -> next;
     struct F_Heap_LinkedList* new_node = (struct F_Heap_LinkedList*)calloc(1, sizeof(struct F_Heap_LinkedList));
@@ -56,12 +63,12 @@ void F_Heap_Root_Append(struct Node* target) {
     return;
 }
 void F_Heap_Delete(int key) {
-    // get reference
+    // get key (target) reference
     struct Node* target = key_reference[key];
     
     // Step1: delete from parent's child list
     if( target -> parent != NULL ) {
-        struct Child_LinkedList* now = target -> child_head;
+        struct Child_LinkedList* now = target -> parent -> child_head;
         struct Child_LinkedList* last = NULL; // record the last node
         while( now -> data -> key != key ) last = now, now = now -> next;
         if( last != NULL ) last -> next = now -> next; // delete node is not a child head
@@ -71,18 +78,18 @@ void F_Heap_Delete(int key) {
         }
 
         // Update the parent's tag
-        if( now -> data -> tag == 0 ) now -> data -> tag = 1; // no tag before
+        if( target -> parent -> tag == 0 ) target -> parent -> tag = 1; // no tag before
         else {
             // TODO: cascating cut
         }
     }
-
-    // Step2: Clear the parent & Set this node is a root
-    target -> parent = NULL;
-    target -> root = 1;
-
-    // Step3: append to root list
-    F_Heap_Root_Append(target);
+    
+    // insert target's child to F_Heap Linked List
+    struct Child_LinkedList* child_ptr = target -> child_head;
+    while( child_ptr != NULL ) {
+        F_Heap_Root_Append( child_ptr -> data );
+        child_ptr = child_ptr -> next;
+    }
 
     return;
 }
