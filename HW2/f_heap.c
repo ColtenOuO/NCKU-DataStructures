@@ -24,9 +24,20 @@ struct F_Heap_LinkedList {
 };
 struct F_Heap_LinkedList* F_heap_head;
 
-void F_Heap_Merge_Check() {
-    struct F_Heap_LinkedList* now = F_heap_head;
+void Rebuild_LinkedList() {
 
+}
+void F_Heap_Merge_Check() {
+    struct F_Heap_LinkedList* now_ptr = F_heap_head;
+    struct Node** hash_mp;
+    hash_mp = (struct Node**)calloc(10001, sizeof(struct Node*));
+    while( now_ptr != NULL ) {
+        if( hash_mp[now_ptr->data->degree] != NULL ) {
+
+        }
+        hash_mp[now_ptr->data->degree] = now_ptr -> data;
+
+    }
 }
 void F_Heap_Insert(int key) {
     struct F_Heap_LinkedList* new_list_node = (struct F_Heap_LinkedList*)calloc(1, sizeof(struct F_Heap_LinkedList));
@@ -49,6 +60,28 @@ void F_Heap_Insert(int key) {
     new_list_node -> data -> parent = NULL;
     new_list_node -> data -> child_head = NULL;
     key_reference[key] = new_list_node -> data;
+
+    return;
+}
+void Cascating_Cut(struct Node* target) {
+    // Step1: Update parent's child list
+    struct Node* parent_ptr = target -> parent;
+    struct Child_LinkedList* now_ptr = parent_ptr -> child_head;
+    struct Child_LinkedList* last_ptr = NULL;
+    while( now_ptr -> data -> key != target -> key ) last_ptr = now_ptr, now_ptr = now_ptr -> next;
+
+    if( last_ptr == NULL ) { // Case1: target is a child head
+        if( now_ptr -> next == NULL ) parent_ptr -> child_head = NULL;
+        else parent_ptr -> child_head = now_ptr -> next;
+    }
+    else last_ptr -> next = now_ptr -> next; // Case2: target is not a child head
+
+    parent_ptr -> degree -= 1; // degree -= 1
+
+    if( target -> parent -> tag == 1 ) Cascating_Cut( target -> parent );
+
+    target -> tag = 0;
+    F_Heap_Root_Append(target);
 
     return;
 }
@@ -77,10 +110,12 @@ void F_Heap_Delete(int key) {
             else now -> data -> child_head = now -> next; // Case 2: new child head is next position
         }
 
+        target -> parent -> degree -= 1;
         // Update the parent's tag
         if( target -> parent -> tag == 0 ) target -> parent -> tag = 1; // no tag before
         else {
             // TODO: cascating cut
+            Cascating_Cut( target -> parent );
         }
     }
     
