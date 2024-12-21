@@ -1,9 +1,20 @@
-bucket 10
-slot 2
-insert 3
-insert 13
+insert 2
 insert 4
-search 13
-delete 3
-search 4
+insert 8
+insert 16
+insert 32
+insert 64
+insert 128
+extract-min
+decrease 128 127
+insert 100
+insert 90
+extract-min
+delete 8
+delete 16
+extract-min
+decrease 100 50
+insert 70
+extract-min
+delete 64
 exit
